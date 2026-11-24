@@ -86,16 +86,19 @@
           playPromise.then(() => {
             this.useHtmlAudio = true;
           }).catch((err) => {
-            console.log("Audio tag play prevented or file missing, switching to Web Audio live ensemble:", err);
-            this.useHtmlAudio = false;
-            this.playLiveEnsemble();
+            console.log("Audio playback waiting for user tap:", err);
+            this.isPlaying = false;
+            const btn = document.getElementById('music');
+            if (btn) {
+              btn.classList.remove('on');
+              btn.setAttribute('aria-pressed', 'false');
+            }
           });
           return;
         }
       }
 
-      // 2. Fallback to live celebratory synthesizer
-      this.playLiveEnsemble();
+      this.stopLiveEnsemble();
     }
 
     pause() {
@@ -338,9 +341,10 @@
         }
       }, 700);
 
-      // 3. Remove scene overlay from view
+      // 3. Remove scene overlay from view and deallocate 3D GPU layer
       setTimeout(() => {
         scene.classList.add('gone');
+        scene.style.display = 'none';
       }, 1900);
     };
 
@@ -491,15 +495,38 @@
       petals.push(new Petal());
     }
 
-    function renderPetals() {
+    // High-performance canvas loop: pauses during active touch scrolling
+    // so mobile browsers can dedicate 100% of GPU threads to smooth 60/120fps scrolling
+    let isFastScrolling = false;
+    let scrollStopTimer = null;
+    window.addEventListener('scroll', () => {
+      isFastScrolling = true;
+      clearTimeout(scrollStopTimer);
+      scrollStopTimer = setTimeout(() => {
+        isFastScrolling = false;
+      }, 120);
+    }, { passive: true });
+
+    let lastPetalTime = 0;
+    const isMobileDevice = window.innerWidth < 600;
+    const targetDelta = isMobileDevice ? 32 : 16; // 30 FPS on mobile, 60 FPS on desktop
+
+    function renderPetals(timestamp) {
+      requestAnimationFrame(renderPetals);
+
+      if (document.hidden || (isMobileDevice && isFastScrolling)) return;
+
+      const delta = timestamp - lastPetalTime;
+      if (delta < targetDelta) return;
+      lastPetalTime = timestamp - (delta % targetDelta);
+
       ctx.clearRect(0, 0, width, height);
       for (const p of petals) {
         p.update();
         p.draw();
       }
-      requestAnimationFrame(renderPetals);
     }
-    renderPetals();
+    requestAnimationFrame(renderPetals);
   }
 
   /* =========================================================================
@@ -675,11 +702,9 @@
       const tx = Math.sin(angle * Math.PI / 180) * 185;
       const scale = offset === 0 ? 1 : 0.86;
       const opacity = Math.abs(offset) > 2 ? 0 : offset === 0 ? 1 : 0.65;
-      const blur = offset === 0 ? 0 : 2.5;
 
       card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${-angle}deg) scale(${scale})`;
       card.style.opacity = opacity;
-      card.style.filter = `blur(${blur}px)`;
       card.style.pointerEvents = offset === 0 ? 'auto' : 'auto';
       card.style.zIndex = 10 - Math.abs(offset);
       card.style.cursor = offset === 0 ? 'default' : 'pointer';
@@ -763,11 +788,9 @@
       const tx = Math.sin(angle * Math.PI / 180) * 185;
       const scale = offset === 0 ? 1 : 0.86;
       const opacity = Math.abs(offset) > 2 ? 0 : offset === 0 ? 1 : 0.65;
-      const blur = offset === 0 ? 0 : 2.5;
 
       card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${-angle}deg) scale(${scale})`;
       card.style.opacity = opacity;
-      card.style.filter = `blur(${blur}px)`;
       card.style.pointerEvents = offset === 0 ? 'auto' : 'none';
       card.style.zIndex = 10 - Math.abs(offset);
     });
@@ -903,25 +926,30 @@
   const bgWords = document.querySelectorAll('.bgword');
   const arrowEl = document.getElementById('arrow');
   let scrollTicking = false;
+  let cachedVh = window.innerHeight;
+  let cachedDocHeight = document.documentElement.scrollHeight;
+
+  window.addEventListener('resize', () => {
+    cachedVh = window.innerHeight;
+    cachedDocHeight = document.documentElement.scrollHeight;
+  }, { passive: true });
 
   function onUnifiedScroll() {
     if (!scrollTicking) {
       requestAnimationFrame(() => {
         const scrollY = window.scrollY || window.pageYOffset;
-        const vh = window.innerHeight;
-        const docHeight = document.documentElement.scrollHeight;
 
         // Subtle watermark parallax without triggering layout reflow
         bgWords.forEach((word) => {
           const parent = word.parentElement;
           if (!parent) return;
-          const offset = (parent.offsetTop - scrollY - vh * 0.5) * 0.14;
+          const offset = (parent.offsetTop - scrollY - cachedVh * 0.5) * 0.14;
           word.style.transform = `translate(-50%, -50%) translateY(${offset}px)`;
         });
 
         // Hide scroll indicator near bottom
         if (arrowEl) {
-          const atBottom = (scrollY + vh) >= (docHeight - 120);
+          const atBottom = (scrollY + cachedVh) >= (cachedDocHeight - 120);
           if (atBottom) {
             arrowEl.classList.remove('on');
             arrowEl.classList.add('hidden');
