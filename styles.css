@@ -1,17 +1,17 @@
 /* Layout: a royal velvet book on a champagne-tinted silk table. The cover swings open, the camera swooshes into the first page, and the page scrolls as a majestic series of panels.
-   Interactive themes: Sage Garden, Rose Shubh Vivaah, Royal Marigold, Midnight Gold. */
+   Interactive themes: Royal Marigold (Default), Mehndi Emerald, Rose Ruby Velvet, Midnight Gold. */
 :root{
-  --ivory:#fcfaf5; --paper:#fffdfa; --wine:#082f2b; --wine-d:#041c19; --emerald-mid:#12483d; --emerald-light:#1c6152;
-  --gold:#c59e53; --gold-lt:#e8d3a6; --gold-shimmer:#fdf5e2;
-  --blush:#f2f6f4; --rose:#d7b56d; --sage:#1c6152; --ink:#142321; --muted:#526360;
+  --ivory:#fff9ee; --paper:#fffdf8; --wine:#b83a04; --wine-d:#7a2400; --emerald-mid:#d94807; --emerald-light:#f06418;
+  --gold:#e58e00; --gold-lt:#ffd075; --gold-shimmer:#fff5e3;
+  --blush:#fde8c4; --rose:#ff793f; --sage:#b83a04; --ink:#2e1704; --muted:#785133;
   --f-head:"Playfair Display",Georgia,"Times New Roman",serif;
   --f-body:"Montserrat","Helvetica Neue",Arial,sans-serif;
-  --bg-body:#e3dcce;
-  --bg-page:radial-gradient(rgba(197,158,83,.08) 1px,transparent 1.4px) 0 0/20px 20px,linear-gradient(180deg,#fcfaf5 0%,#f4eee3 22%,#fbf9f4 42%,#f2eae0 64%,#fcfaf5 82%,#f3eee4 100%);
-  --cover-bg:radial-gradient(ellipse 80% 60% at 40% 30%,#154c43,#0b3732 60%,#05201c);
-  --rec-bg:radial-gradient(ellipse 90% 70% at 50% 25%,#154c43,#0b3732 62%,#05201c);
-  --fveil-bg:radial-gradient(ellipse 80% 55% at 50% 50%, rgba(255,253,250,0.92) 0%, rgba(252,250,245,0.78) 70%, rgba(252,250,245,0.4) 100%);
-  --scene-bg:radial-gradient(ellipse 80% 60% at 50% 45%,#f7efe2,#ece0d0 60%,#ded0be);
+  --bg-body:#eed4a6;
+  --bg-page:radial-gradient(rgba(216,98,16,.14) 1px,transparent 1.4px) 0 0/20px 20px,linear-gradient(180deg,#fff9ee 0%,#feefd5 22%,#fff5e4 42%,#fce5be 64%,#fff9ee 82%,#fadfaa 100%);
+  --cover-bg:radial-gradient(ellipse 80% 60% at 40% 30%,#9e3305,#782400 60%,#471300);
+  --rec-bg:radial-gradient(ellipse 90% 70% at 50% 25%,#9e3305,#782400 62%,#471300);
+  --fveil-bg:radial-gradient(ellipse 80% 55% at 50% 50%, rgba(255,249,238,0.94) 0%, rgba(254,239,213,0.82) 70%, rgba(254,239,213,0.45) 100%);
+  --scene-bg:radial-gradient(ellipse 80% 60% at 50% 45%,#fde5bb,#f7cf91 60%,#e5af67);
   color-scheme:light;
 }
 
@@ -114,7 +114,7 @@ html{scroll-behavior:smooth}
 body{background:var(--bg-body,#e3dcce);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;transition:background .4s ease, color .4s ease}
 body.locked{overflow:hidden;height:100%}
 .page{max-width:480px;margin:0 auto;position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(8,47,43,.25);
-  background:var(--bg-page);transition:background .4s ease}
+  background:var(--bg-page);transition:background .4s ease;transform:translateZ(0);-webkit-overflow-scrolling:touch}
 .ff{position:fixed;top:0;bottom:0;left:50%;width:min(100%,480px);transform:translateX(-50%);pointer-events:none;overflow:hidden}
 .ff.back{z-index:1}.ff.front-l{z-index:6}
 .ff .layerin{position:absolute;inset:0}

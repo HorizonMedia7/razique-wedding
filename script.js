@@ -12,6 +12,21 @@
   const config = window.WEDDING_CONFIG || {};
   let updatePetalPalette = null;
 
+  // Eagerly preload and GPU-decode Dastaan-e-Ishq story images immediately for zero delay
+  const preloadUrls = [
+    'photos/story_1.jpg',
+    'photos/story_2.jpg',
+    'photos/story_3.jpg',
+    'photos/story_4.jpg',
+    'photos/story_5.jpg',
+    'photos/bharat_lawns_map.jpg'
+  ];
+  preloadUrls.forEach((url) => {
+    const img = new Image();
+    img.src = url;
+    if (img.decode) img.decode().catch(() => {});
+  });
+
   /* =========================================================================
    * 1. ROYAL WEDDING SOUNDTRACK & LIVE ENSEMBLE (Dual Audio Engine)
    * High-fidelity recorded audio track with live celebratory synthesizer fallback
@@ -374,7 +389,7 @@
       height = canvas.height = window.innerHeight;
     });
 
-    const petalCount = 36;
+    const petalCount = window.innerWidth < 600 ? 18 : 30;
     const petals = [];
 
     // Theme-specific falling flower petals & starlight palettes
@@ -411,11 +426,11 @@
       ]
     };
 
-    let currentPetalPalette = themePetalPalettes.emerald;
+    let currentPetalPalette = themePetalPalettes.marigold;
 
     updatePetalPalette = function (themeKey) {
       const k = themeKey === 'sage' ? 'emerald' : themeKey;
-      currentPetalPalette = themePetalPalettes[k] || themePetalPalettes.emerald;
+      currentPetalPalette = themePetalPalettes[k] || themePetalPalettes.marigold;
       petals.forEach((p) => {
         p.color = currentPetalPalette[Math.floor(Math.random() * currentPetalPalette.length)];
       });
@@ -467,14 +482,6 @@
         ctx.bezierCurveTo(this.size * 0.8, -this.size * 0.8, this.size * 0.9, this.size * 0.3, 0, this.size);
         ctx.bezierCurveTo(-this.size * 0.9, this.size * 0.3, -this.size * 0.8, -this.size * 0.8, 0, -this.size);
         ctx.fill();
-
-        // Shimmer vein highlight
-        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.4})`;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(0, -this.size * 0.8);
-        ctx.quadraticCurveTo(this.size * 0.1, 0, 0, this.size * 0.8);
-        ctx.stroke();
 
         ctx.restore();
       }
@@ -880,6 +887,7 @@
         if (entry.target.classList.contains('map')) {
           entry.target.classList.add('go');
         }
+        observer.unobserve(entry.target);
       }
     });
   }, {
@@ -888,48 +896,49 @@
 
   revealElements.forEach((el) => observer.observe(el));
 
-  // Parallax on watermarks (.bgword)
-  const bgWords = document.querySelectorAll('.bgword');
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    bgWords.forEach((word) => {
-      const parent = word.closest('section') || word.closest('header');
-      if (!parent) return;
-      const rect = parent.getBoundingClientRect();
-      const offset = (rect.top - window.innerHeight / 2) * 0.18;
-      word.style.transform = `translate(-50%, -50%) translateY(${offset}px)`;
-    });
-  }, { passive: true });
-
   /* =========================================================================
-   * 11. HIDE SCROLL INDICATOR AT BOTTOM OF WEBSITE
-   * Automatically removes the "Scroll" text and bouncing chevrons when the
-   * user reaches the bottom of the page.
+   * 11. HIGH-PERFORMANCE 60FPS SCROLL ENGINE (PARALLAX + INDICATOR)
+   * Throttled with requestAnimationFrame to prevent layout thrashing on mobile
    * ========================================================================= */
+  const bgWords = document.querySelectorAll('.bgword');
   const arrowEl = document.getElementById('arrow');
+  let scrollTicking = false;
 
-  function updateScrollIndicator() {
-    if (!arrowEl) return;
-    const scrollY = window.scrollY || window.pageYOffset;
-    const viewportHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
+  function onUnifiedScroll() {
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const vh = window.innerHeight;
+        const docHeight = document.documentElement.scrollHeight;
 
-    // Check if reached within 120px of the bottom of the page
-    const atBottom = (scrollY + viewportHeight) >= (docHeight - 120);
+        // Subtle watermark parallax without triggering layout reflow
+        bgWords.forEach((word) => {
+          const parent = word.parentElement;
+          if (!parent) return;
+          const offset = (parent.offsetTop - scrollY - vh * 0.5) * 0.14;
+          word.style.transform = `translate(-50%, -50%) translateY(${offset}px)`;
+        });
 
-    if (atBottom) {
-      arrowEl.classList.remove('on');
-      arrowEl.classList.add('hidden');
-    } else {
-      if (!document.body.classList.contains('locked')) {
-        arrowEl.classList.add('on');
-        arrowEl.classList.remove('hidden');
-      }
+        // Hide scroll indicator near bottom
+        if (arrowEl) {
+          const atBottom = (scrollY + vh) >= (docHeight - 120);
+          if (atBottom) {
+            arrowEl.classList.remove('on');
+            arrowEl.classList.add('hidden');
+          } else if (!document.body.classList.contains('locked')) {
+            arrowEl.classList.add('on');
+            arrowEl.classList.remove('hidden');
+          }
+        }
+
+        scrollTicking = false;
+      });
+      scrollTicking = true;
     }
   }
 
-  window.addEventListener('scroll', updateScrollIndicator, { passive: true });
-  window.addEventListener('resize', updateScrollIndicator, { passive: true });
+  window.addEventListener('scroll', onUnifiedScroll, { passive: true });
+  window.addEventListener('resize', onUnifiedScroll, { passive: true });
 
   /* =========================================================================
    * 12. INTERACTIVE THEME SELECTOR & PREFERENCES
@@ -964,7 +973,7 @@
 
   function applyTheme(themeKey, save = true) {
     const validThemes = ['emerald', 'rose', 'marigold', 'midnight', 'sage'];
-    const key = validThemes.includes(themeKey) ? (themeKey === 'sage' ? 'emerald' : themeKey) : 'emerald';
+    const key = validThemes.includes(themeKey) ? (themeKey === 'sage' ? 'emerald' : themeKey) : 'marigold';
 
     document.documentElement.setAttribute('data-theme', key);
     document.body.setAttribute('data-theme', key);
@@ -1037,8 +1046,8 @@
     });
   });
 
-  // Initialize theme on page load from localStorage (default: emerald)
-  const savedTheme = localStorage.getItem('wedding_theme') || 'emerald';
+  // Initialize theme on page load from localStorage (default: marigold)
+  const savedTheme = localStorage.getItem('wedding_theme') || 'marigold';
   applyTheme(savedTheme, false);
 
 })();

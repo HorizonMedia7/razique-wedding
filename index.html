@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="marigold">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,13 +7,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="photos/story_1.jpg">
+  <link rel="preload" as="image" href="photos/story_2.jpg">
   <link rel="stylesheet" href="styles.css">
   <style>
     .sparkle-burst { pointer-events: none; }
     .quranic-calligraphy { font-family: 'Amiri', serif; font-size: 28px; line-height: 1.8; color: var(--wine); }
   </style>
 </head>
-<body class="locked">
+<body class="locked" data-theme="marigold">
 
   <!-- ==========================================
        SVG ICONS & ISLAMIC SYMBOLS DEFS
@@ -321,7 +323,7 @@
         <!-- Card 1 -->
         <article class="story-card" data-idx="0">
           <div class="sc-arch">
-            <img class="sc-img" src="photos/story_1.jpg" alt="And We Created You in Pairs - Sacred Union" loading="lazy">
+            <img class="sc-img" src="photos/story_1.jpg" alt="And We Created You in Pairs - Sacred Union" decoding="async" fetchpriority="high">
             <div class="sc-cap">
               <b>Destined by Grace</b>
               <span>“And We created you in pairs”</span>
@@ -332,7 +334,7 @@
         <!-- Card 2 -->
         <article class="story-card" data-idx="1">
           <div class="sc-arch">
-            <img class="sc-img" src="photos/story_2.jpg" alt="Mubarak Nikah - The Sacred Vows" loading="lazy">
+            <img class="sc-img" src="photos/story_2.jpg" alt="Mubarak Nikah - The Sacred Vows" decoding="async">
             <div class="sc-cap">
               <b>Mubarak Nikah</b>
               <span>The Sacred Vow &bull; Qubool Hai</span>
@@ -343,7 +345,7 @@
         <!-- Card 3 -->
         <article class="story-card" data-idx="2">
           <div class="sc-arch">
-            <img class="sc-img" src="photos/story_3.jpg" alt="A Legacy of Elegance" loading="lazy">
+            <img class="sc-img" src="photos/story_3.jpg" alt="A Legacy of Elegance" decoding="async">
             <div class="sc-cap">
               <b>Royal Elegance</b>
               <span>Stepping into a blessed tomorrow</span>
@@ -354,7 +356,7 @@
         <!-- Card 4 -->
         <article class="story-card" data-idx="3">
           <div class="sc-arch">
-            <img class="sc-img" src="photos/story_4.jpg" alt="Together in Harmony" loading="lazy">
+            <img class="sc-img" src="photos/story_4.jpg" alt="Together in Harmony" decoding="async">
             <div class="sc-cap">
               <b>Bound by Devotion</b>
               <span>Two souls, one heartfelt prayer</span>
@@ -365,7 +367,7 @@
         <!-- Card 5 -->
         <article class="story-card" data-idx="4">
           <div class="sc-arch">
-            <img class="sc-img" src="photos/story_5.jpg" alt="A Lifetime of Joy" loading="lazy">
+            <img class="sc-img" src="photos/story_5.jpg" alt="A Lifetime of Joy" decoding="async">
             <div class="sc-cap">
               <b>Celebration of Joy</b>
               <span>A lifetime of laughter, faith &amp; love</span>
@@ -622,8 +624,8 @@
           <div class="tc-desc">Vibrant rose pink backdrop, ruby wine &amp; gold</div>
         </button>
 
-        <!-- 3. Royal Marigold -->
-        <button class="theme-card" data-theme-choice="marigold" type="button">
+        <!-- 3. Royal Marigold (Default) -->
+        <button class="theme-card active" data-theme-choice="marigold" type="button" aria-pressed="true">
           <div class="tc-header">
             <div class="tc-title">Royal Marigold</div>
             <div class="tc-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
