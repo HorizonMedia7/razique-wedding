@@ -387,11 +387,16 @@
     const ctx = canvas.getContext('2d');
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
 
     window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
+      // Prevent mobile address bar collapse/expand from wiping the canvas context
+      if (Math.abs(window.innerWidth - lastWidth) > 30 || Math.abs(window.innerHeight - lastHeight) > 150) {
+        lastWidth = width = canvas.width = window.innerWidth;
+        lastHeight = height = canvas.height = window.innerHeight;
+      }
+    }, { passive: true });
 
     const petalCount = window.innerWidth < 600 ? 18 : 30;
     const petals = [];
@@ -460,12 +465,12 @@
         this.wobbleSpeed = 0.03 + Math.random() * 0.02;
       }
 
-      update() {
-        this.y += this.vy;
-        this.wobble += this.wobbleSpeed;
-        this.x += this.vx + Math.sin(this.wobble) * 0.8;
-        this.rot += this.rotSpeed;
-        this.flip += this.flipSpeed;
+      update(dt = 1) {
+        this.y += this.vy * dt;
+        this.wobble += this.wobbleSpeed * dt;
+        this.x += (this.vx + Math.sin(this.wobble) * 0.8) * dt;
+        this.rot += this.rotSpeed * dt;
+        this.flip += this.flipSpeed * dt;
 
         if (this.y > height + 40 || this.x < -40 || this.x > width + 40) {
           this.reset();
@@ -495,15 +500,23 @@
       petals.push(new Petal());
     }
 
-    // Continuous 60fps falling petals loop - continues gracefully at all times including while scrolling
-    function renderPetals() {
+    // Continuous delta-timed falling petals: totally unaffected by scroll velocity or frame timing
+    let lastPetalTimestamp = performance.now();
+    function renderPetals(timestamp) {
       requestAnimationFrame(renderPetals);
 
-      if (document.hidden) return;
+      if (document.hidden) {
+        lastPetalTimestamp = timestamp;
+        return;
+      }
+
+      const elapsed = timestamp - lastPetalTimestamp;
+      lastPetalTimestamp = timestamp;
+      const dt = Math.min(2.0, Math.max(0.5, elapsed / 16.67));
 
       ctx.clearRect(0, 0, width, height);
       for (const p of petals) {
-        p.update();
+        p.update(dt);
         p.draw();
       }
     }
@@ -667,6 +680,8 @@
   const evCards = document.querySelectorAll('.ev-card');
   const evDots = document.querySelectorAll('#evdots i');
   let currentEvent = 0;
+  let evAutoTimer = null;
+  let isEvInView = false;
 
   function setEventActive(index) {
     if (!evCards.length) return;
@@ -696,7 +711,30 @@
     });
   }
 
+  function startEvAutoScroll() {
+    stopEvAutoScroll();
+    evAutoTimer = setInterval(() => {
+      if (isEvInView && !document.hidden) {
+        // Auto-scroll forward: brings the right-side event card into center view
+        setEventActive(currentEvent + 1);
+      }
+    }, 4200);
+  }
+
+  function stopEvAutoScroll() {
+    if (evAutoTimer) {
+      clearInterval(evAutoTimer);
+      evAutoTimer = null;
+    }
+  }
+
+  function resetEvAutoScroll() {
+    stopEvAutoScroll();
+    setTimeout(startEvAutoScroll, 6000);
+  }
+
   if (evCards.length > 0) {
+    // 1. Start strictly on Rawaangi-e-Barat (Event Index 0)
     setEventActive(0);
 
     evCards.forEach((card, i) => {
@@ -704,12 +742,16 @@
         if (i !== currentEvent) {
           e.stopPropagation();
           setEventActive(i);
+          resetEvAutoScroll();
         }
       });
     });
 
     evDots.forEach((dot, i) => {
-      dot.addEventListener('click', () => setEventActive(i));
+      dot.addEventListener('click', () => {
+        setEventActive(i);
+        resetEvAutoScroll();
+      });
     });
 
     const evSphere = document.querySelector('.evsphere');
@@ -719,21 +761,24 @@
 
       evSphere.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
+        stopEvAutoScroll();
       }, { passive: true });
 
       evSphere.addEventListener('touchend', (e) => {
         const touchEndX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchEndX;
         if (Math.abs(diff) > 30) {
-          if (diff > 0) setEventActive(currentEvent + 1);
-          else setEventActive(currentEvent - 1);
+          if (diff > 0) setEventActive(currentEvent + 1); // Drag left brings right image
+          else setEventActive(currentEvent - 1);           // Drag right brings left image
         }
+        resetEvAutoScroll();
       });
 
       // Mouse drag support for desktop
       evSphere.addEventListener('mousedown', (e) => {
         isDragging = true;
         touchStartX = e.clientX;
+        stopEvAutoScroll();
       });
 
       window.addEventListener('mouseup', (e) => {
@@ -744,16 +789,31 @@
           if (diff > 0) setEventActive(currentEvent + 1);
           else setEventActive(currentEvent - 1);
         }
+        resetEvAutoScroll();
       });
+
+      // Auto-scroll runs when events section is in viewport
+      const evSection = document.getElementById('events') || evSphere;
+      const evViewObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          isEvInView = entry.isIntersecting;
+          if (isEvInView) startEvAutoScroll();
+          else stopEvAutoScroll();
+        });
+      }, { threshold: 0.2 });
+      evViewObserver.observe(evSection);
     }
   }
 
   /* =========================================================================
    * 7. DASTAAN-E-ISHQ 3D STORY CAROUSEL (#story)
+   * Auto-scrolls forward bringing right-side photo into center view
    * ========================================================================= */
   const storyCards = document.querySelectorAll('.story-card');
   const storyDots = document.querySelectorAll('#story-dots i');
   let currentStory = 0;
+  let storyAutoTimer = null;
+  let isStoryInView = false;
 
   function setStoryActive(index) {
     if (!storyCards.length) return;
@@ -781,11 +841,36 @@
     });
   }
 
+  function startStoryAutoScroll() {
+    stopStoryAutoScroll();
+    storyAutoTimer = setInterval(() => {
+      if (isStoryInView && !document.hidden) {
+        // Auto-scroll forward: brings the right-side story photo into center view
+        setStoryActive(currentStory + 1);
+      }
+    }, 3800);
+  }
+
+  function stopStoryAutoScroll() {
+    if (storyAutoTimer) {
+      clearInterval(storyAutoTimer);
+      storyAutoTimer = null;
+    }
+  }
+
+  function resetStoryAutoScroll() {
+    stopStoryAutoScroll();
+    setTimeout(startStoryAutoScroll, 6000);
+  }
+
   if (storyCards.length > 0) {
     setStoryActive(0);
 
     storyDots.forEach((dot, i) => {
-      dot.addEventListener('click', () => setStoryActive(i));
+      dot.addEventListener('click', () => {
+        setStoryActive(i);
+        resetStoryAutoScroll();
+      });
     });
 
     const storySphere = document.querySelector('.story-sphere');
@@ -793,23 +878,41 @@
       let touchStartX = 0;
       storySphere.addEventListener('touchstart', (e) => {
         touchStartX = e.touches[0].clientX;
+        stopStoryAutoScroll();
       }, { passive: true });
 
       storySphere.addEventListener('touchend', (e) => {
         const touchEndX = e.changedTouches[0].clientX;
         const diff = touchStartX - touchEndX;
         if (Math.abs(diff) > 35) {
-          if (diff > 0) setStoryActive(currentStory + 1);
-          else setStoryActive(currentStory - 1);
+          if (diff > 0) setStoryActive(currentStory + 1); // Drag left brings right image
+          else setStoryActive(currentStory - 1);           // Drag right brings left image
         }
+        resetStoryAutoScroll();
       });
 
       storySphere.addEventListener('click', (e) => {
         const rect = storySphere.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        if (clickX < rect.width * 0.3) setStoryActive(currentStory - 1);
-        else if (clickX > rect.width * 0.7) setStoryActive(currentStory + 1);
+        if (clickX < rect.width * 0.3) {
+          setStoryActive(currentStory - 1);
+          resetStoryAutoScroll();
+        } else if (clickX > rect.width * 0.7) {
+          setStoryActive(currentStory + 1);
+          resetStoryAutoScroll();
+        }
       });
+
+      // Auto-scroll runs when story section is in viewport
+      const storySection = document.getElementById('story') || storySphere;
+      const storyViewObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          isStoryInView = entry.isIntersecting;
+          if (isStoryInView) startStoryAutoScroll();
+          else stopStoryAutoScroll();
+        });
+      }, { threshold: 0.2 });
+      storyViewObserver.observe(storySection);
     }
   }
 

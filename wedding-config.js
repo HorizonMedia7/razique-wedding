@@ -59,7 +59,7 @@ window.WEDDING_CONFIG = {
       title: "Rawaangi-e-Barat",
       hindiTitle: "रवानगी-ए-बरात",
       when: "Sunday · 27 Dec 2026 · 8:00 AM",
-      venue: "From Haji Wafati's Residence, Fatima Nagar, Malkapur to Timarni",
+      venue: "From Haji Bafati's Residence, Fatima Nagar, Malkapur to Timarni",
       badge: "Ceremony I",
       icon: "barat"
     },
