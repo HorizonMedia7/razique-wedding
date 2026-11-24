@@ -495,30 +495,11 @@
       petals.push(new Petal());
     }
 
-    // High-performance canvas loop: pauses during active touch scrolling
-    // so mobile browsers can dedicate 100% of GPU threads to smooth 60/120fps scrolling
-    let isFastScrolling = false;
-    let scrollStopTimer = null;
-    window.addEventListener('scroll', () => {
-      isFastScrolling = true;
-      clearTimeout(scrollStopTimer);
-      scrollStopTimer = setTimeout(() => {
-        isFastScrolling = false;
-      }, 120);
-    }, { passive: true });
-
-    let lastPetalTime = 0;
-    const isMobileDevice = window.innerWidth < 600;
-    const targetDelta = isMobileDevice ? 32 : 16; // 30 FPS on mobile, 60 FPS on desktop
-
-    function renderPetals(timestamp) {
+    // Continuous 60fps falling petals loop - continues gracefully at all times including while scrolling
+    function renderPetals() {
       requestAnimationFrame(renderPetals);
 
-      if (document.hidden || (isMobileDevice && isFastScrolling)) return;
-
-      const delta = timestamp - lastPetalTime;
-      if (delta < targetDelta) return;
-      lastPetalTime = timestamp - (delta % targetDelta);
+      if (document.hidden) return;
 
       ctx.clearRect(0, 0, width, height);
       for (const p of petals) {
