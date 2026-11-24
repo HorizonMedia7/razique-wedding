@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Abdul Razique Chauhan &amp; Alisha Naz | Royal Wedding Celebration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .sparkle-burst { pointer-events: none; }
+    .quranic-calligraphy { font-family: 'Amiri', serif; font-size: 28px; line-height: 1.8; color: var(--wine); }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- ==========================================
+       SVG ICONS & ISLAMIC SYMBOLS DEFS
+       ========================================== -->
+  <svg style="display:none;" aria-hidden="true">
+    <defs>
+      <!-- Royal Islamic Crescent & 8-Point Star Medallion (Rub el Hizb) -->
+      <g id="islamic-medallion">
+        <!-- 8-Point Star Outer Geometry -->
+        <polygon points="50,10 62,22 78,22 78,38 90,50 78,62 78,78 62,78 50,90 38,78 22,78 22,62 10,50 22,38 22,22 38,22" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2,3"/>
+        <!-- Elegant Crescent Moon -->
+        <path d="M54 32 C42 32 34 40 34 50 C34 60 42 68 54 68 C45 66 40 59 40 50 C40 41 45 34 54 32 Z" fill="currentColor"/>
+        <!-- Brilliant Star -->
+        <polygon points="62,42 64,46 68,48 64,50 62,54 60,50 56,48 60,46" fill="currentColor"/>
+      </g>
+
+      <!-- Royal Barat Icon (Horse & Chariot Motif) -->
+      <g id="i-barat">
+        <circle cx="32" cy="32" r="28" fill="#eef5f2" stroke="#c59e53" stroke-width="1.5"/>
+        <path d="M22 24 C22 18 42 18 42 24 Z" fill="#c59e53"/>
+        <path d="M32 14 L32 20" stroke="#082f2b" stroke-width="2"/>
+        <path d="M20 46 C20 38 26 32 34 32 C38 32 44 36 44 42 C44 46 40 48 40 52 L36 52 L36 46 L28 46 L28 52 L24 52 Z" fill="#082f2b"/>
+        <path d="M30 34 L38 42" stroke="#c59e53" stroke-width="1.5"/>
+        <circle cx="32" cy="38" r="2" fill="#c59e53"/>
+      </g>
+
+      <!-- Sacred Nikah Icon (Qu'ran & Mihrab Arch) -->
+      <g id="i-nikah">
+        <circle cx="32" cy="32" r="28" fill="#fdfaf3" stroke="#c59e53" stroke-width="1.5"/>
+        <path d="M18 48 L18 28 C18 20 32 14 32 14 C32 14 46 20 46 28 L46 48 Z" fill="none" stroke="#c59e53" stroke-width="1.8"/>
+        <path d="M22 42 Q32 36 42 42 L42 46 Q32 40 22 46 Z" fill="#082f2b"/>
+        <path d="M26 46 L38 52 M38 46 L26 52" stroke="#c59e53" stroke-width="1.8"/>
+        <polygon points="32,22 33.5,25 37,26 33.5,27 32,30 30.5,27 27,26 30.5,25" fill="#c59e53"/>
+      </g>
+
+      <!-- Dawat-e-Walima Icon (Royal Feast Dastarkhwan) -->
+      <g id="i-walima">
+        <circle cx="32" cy="32" r="28" fill="#eef5f2" stroke="#c59e53" stroke-width="1.5"/>
+        <ellipse cx="32" cy="42" rx="18" ry="6" fill="#c59e53"/>
+        <path d="M18 40 C18 26 46 26 46 40 Z" fill="#082f2b"/>
+        <circle cx="32" cy="24" r="3" fill="#c59e53"/>
+        <path d="M24 20 L27 28 L27 34 L23 34 L29 34 L27 34 Z" fill="none" stroke="#c59e53" stroke-width="1.5"/>
+        <path d="M40 20 L37 28 L37 34 L33 34 L39 34 L37 34 Z" fill="none" stroke="#c59e53" stroke-width="1.5"/>
+      </g>
+
+      <!-- Phone Icon -->
+      <g id="i-phone">
+        <path d="M6 3 C4.34 3 3 4.34 3 6 C3 14.84 10.16 22 19 22 C20.66 22 22 20.66 22 19 V16.5 C22 15.67 21.33 15 20.5 15 L17.5 15 C16.95 15 16.45 15.3 16.2 15.8 L15.2 17.8 C12.2 16.3 9.7 13.8 8.2 10.8 L10.2 9.8 C10.7 9.55 11 9.05 11 8.5 V5.5 C11 4.67 10.33 4 9.5 4 H7 C6.45 4 6 4.45 6 5 Z" fill="currentColor"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- ==========================================
+       FALLING CHAMPAGNE & JASMINE PETALS CANVAS
+       ========================================== -->
+  <canvas id="petals" aria-hidden="true"></canvas>
+
+  <!-- ==========================================
+       FLOATING AUDIO TOGGLE & SOUNDTRACK
+       ========================================== -->
+  <audio id="weddingAudio" src="audio/background_music.mp3" loop preload="auto"></audio>
+  <button id="music" aria-label="Toggle background wedding music" aria-pressed="false" class="">
+    <span class="bars"><i></i><i></i><i></i></span>
+  </button>
+
+  <!-- ==========================================
+       FLOATING THEME SWITCHER BUTTON
+       ========================================== -->
+  <button id="theme-btn" aria-label="Choose color theme" title="Choose color theme">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2C6.49 2 2 6.49 2 12c0 4.42 3.58 8 8 8 .55 0 1-.45 1-1v-1.18c0-.79.64-1.42 1.42-1.42.4 0 .76.16 1.03.43l1.15 1.15c.78.78 1.83 1.22 2.94 1.22C19.87 20.2 22 17.07 22 13.15 22 7 17.52 2 12 2zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 8 6.5 8 8 8.67 8 9.5 7.33 11 6.5 11zm3-4C8.67 7 8 6.33 8 5.5S8.67 4 9.5 4s1.5.67 1.5 1.5S10.33 7 9.5 7zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 4 14.5 4s1.5.67 1.5 1.5S15.33 7 14.5 7zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 8 17.5 8s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+    </svg>
+    <span>Theme</span>
+  </button>
+
+  <!-- ==========================================
+       SCROLL CHEVRON INDICATOR
+       ========================================== -->
+  <div class="arrow on" id="arrow" aria-hidden="true">
+    <span>Scroll</span>
+    <i></i><i></i>
+  </div>
+
+  <!-- ==========================================
+       HANGING BOTANICAL GARLANDS & 3D CORNER FLOWERS
+       ========================================== -->
+  <div class="hang on" id="ffTop" data-n="6">
+    <div class="str" style="left: 6%; --len: 68px; transform: rotate(1.2deg);">
+      <span class="line" style="--dl:0s"></span>
+      <span class="bead" style="top:8px"></span>
+      <span class="bead p" style="top:22px"></span>
+      <span class="bead" style="top:36px"></span>
+      <span class="bead p" style="top:50px"></span>
+      <span class="rose" style="--rs:28px; top:52px"><img src="photos/p4.jpg" alt="" style="border-radius:50%; object-fit:cover;"></span>
+    </div>
+    <div class="str" style="left: 92%; --len: 74px; transform: rotate(-1.5deg);">
+      <span class="line" style="--dl:0.2s"></span>
+      <span class="bead" style="top:8px"></span>
+      <span class="bead p" style="top:24px"></span>
+      <span class="bead" style="top:40px"></span>
+      <span class="bead p" style="top:56px"></span>
+      <span class="rose" style="--rs:32px; top:58px"><img src="photos/p4.jpg" alt="" style="border-radius:50%; object-fit:cover;"></span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       3D OPENING INVITATION BOOK COVER
+       ========================================== -->
+  <div id="scene">
+    <div class="bokeh" style="width:240px; height:240px; left:12%; top:18%; --t:14s; --dx:30px; --dy:-40px;"></div>
+    <div class="bokeh" style="width:180px; height:180px; right:15%; top:25%; --t:11s; --dx:-35px; --dy:30px;"></div>
+    <div class="bokeh" style="width:210px; height:210px; left:30%; bottom:15%; --t:16s; --dx:25px; --dy:-20px;"></div>
+
+    <div class="bookwrap">
+      <div class="bookfloat">
+        <div class="pages"></div>
+        <div class="cover">
+          <i class="c-front">
+            <div class="spine"></div>
+            <div class="emblem">
+              <div class="ring">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <use href="#islamic-medallion" style="color:var(--gold-lt)"></use>
+                </svg>
+              </div>
+              <b>NIKAH MUBARAK</b>
+              <small>Wedding Invitation</small>
+            </div>
+          </i>
+          <i class="c-back"></i>
+        </div>
+      </div>
+      <button id="book" aria-label="Open the royal wedding invitation book"></button>
+    </div>
+
+    <div class="tap">
+      <div class="dot"></div>
+      <span>Open the Royal Invitation</span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MAIN WEDDING CARD PAGES
+       ========================================== -->
+  <main class="page">
+
+    <!-- 1. HERO FRONT COVER ARCH (Previous Palace Architecture Background, Bold Compact Lineages) -->
+    <header class="front in" id="front">
+      <div class="fphoto" aria-hidden="true">
+        <img class="fbg" src="photos/p3.jpg" alt="Royal Wedding Palace Architecture">
+        <div class="fveil"></div>
+      </div>
+      <div class="frame"></div>
+      <div class="front-in" style="--k: 1.0;">
+        <div class="medal fade on">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <use href="#islamic-medallion" style="color:var(--gold)"></use>
+          </svg>
+        </div>
+        
+        <!-- Bismillah Calligraphy -->
+        <div class="quranic-calligraphy fade on">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        <div class="label fade on">Together with their respected families</div>
+        
+        <h1 style="margin:0">
+          <span class="name" id="n1" data-text="Abdul Razique" aria-label="Abdul Razique">
+            <span class="ch">A</span><span class="ch">b</span><span class="ch">d</span><span class="ch">u</span><span class="ch">l</span>&nbsp;<span class="ch">R</span><span class="ch">a</span><span class="ch">z</span><span class="ch">i</span><span class="ch">q</span><span class="ch">u</span><span class="ch">e</span>
+          </span>
+          <span class="parents fade on" id="p1">
+            <span class="relation"><b>Son of</b> Mohd. Bilal Chauhan</span>
+            <span class="ancestors">Grandson of Marhoom Haji Bafati Chauhan &bull; Prapotra of Marhoom Khudabaksh Chauhan (Sikar wale)</span>
+          </span>
+
+          <span class="amp fade on" id="amp">&amp;</span>
+
+          <span class="name" id="n2" data-text="Alisha Naz" aria-label="Alisha Naz">
+            <span class="ch">A</span><span class="ch">l</span><span class="ch">i</span><span class="ch">s</span><span class="ch">h</span><span class="ch">a</span>&nbsp;<span class="ch">N</span><span class="ch">a</span><span class="ch">z</span>
+          </span>
+          <span class="parents fade on" id="p2">
+            <span class="relation"><b>Daughter of</b> Ashfaq Ji Banthia (Timarni)</span>
+            <span class="ancestors">Granddaughter of Marhoom Ismail Ji Banthia &bull; Prapotri of Marhoom Saheba Ji Banthia (Raipuriya)</span>
+          </span>
+        </h1>
+
+        <p class="invite fade on" id="inv">
+          request the honour of your company and heartfelt du'as at the celebration of their auspicious Nikah
+        </p>
+      </div>
+    </header>
+
+    <!-- 2. SAVE THE DATE & LIVE COUNTDOWN -->
+    <section class="blush in" id="date">
+      <div class="bgword">Nikah</div>
+
+      <!-- Sacred Quranic Ayah -->
+      <div class="quran-box rv on">
+        <p class="ayah">“And among His signs is that He created for you mates from among yourselves, that you may dwell in tranquility with them, and He has put love and mercy between your hearts.”</p>
+        <div class="surah">— Surah Ar-Rum · 30:21 —</div>
+      </div>
+
+      <div class="head rv on">
+        <span class="label">Save the date</span>
+        <h2>Pull to Reveal</h2>
+      </div>
+
+      <div class="pullbox" id="pullbox">
+        <div class="rodtop"></div>
+        <div class="banner" id="banner">
+          <div class="bin">
+            <svg class="bg-g" viewBox="0 0 100 100"><use href="#islamic-medallion" style="color:var(--gold)"></use></svg>
+            <div class="wd">Sunday</div>
+            <div class="dd">27</div>
+            <div class="mo">December</div>
+            <div class="yr">2026</div>
+            <div class="hijri">17 Rajab 1448 Hijri</div>
+            <div class="mu">Nikah Baad Namaz-e-Maghrib · Timarni</div>
+          </div>
+        </div>
+        <div class="roller" id="roller"></div>
+        <button class="tassel" id="tassel" aria-label="Pull down to reveal wedding date">
+          <svg viewBox="0 0 54 110">
+            <circle cx="27" cy="14" r="10" fill="#c59e53" stroke="#8a6a34" stroke-width="1.5"/>
+            <path d="M27 24 L27 48" stroke="#c59e53" stroke-width="3"/>
+            <path d="M16 48 Q27 44 38 48 L44 105 L10 105 Z" fill="#082f2b"/>
+            <circle cx="27" cy="48" r="12" fill="#c59e53"/>
+            <path d="M12 105 L42 105" stroke="#e8d3a6" stroke-width="2.5"/>
+          </svg>
+        </button>
+        <div class="hand"></div>
+      </div>
+      <div class="pulltip" id="pulltip">Drag the tassel down</div>
+
+      <!-- Live Countdown -->
+      <div class="after" id="countdown">
+        <div class="count">
+          <div><b id="cd-days">00</b><span>Days</span></div>
+          <div><b id="cd-hours">00</b><span>Hours</span></div>
+          <div><b id="cd-mins">00</b><span>Mins</span></div>
+          <div><b id="cd-secs">00</b><span>Secs</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. WEDDING EVENTS (Centered, reduced height, ceremony tags) -->
+    <section class="in" id="celebrate">
+      <div class="bgword">Events</div>
+      <div class="head rv on">
+        <span class="label">Program &bull; प्रोग्राम</span>
+        <h2>Wedding Events</h2>
+      </div>
+
+      <div class="evsphere" aria-label="Wedding events, swipe to browse">
+        <!-- Event 1: Rawaangi-e-Barat -->
+        <article class="ev-card" data-idx="0">
+          <div class="ec">
+            <span class="ev-badge">Ceremony I</span>
+            <div class="ill"><svg viewBox="0 0 64 64"><use href="#i-barat"></use></svg></div>
+            <span class="ewhen">Sunday · 27 Dec 2026 · 8:00 AM</span>
+            <h3>Rawaangi-e-Barat</h3>
+            <span class="place">From Haji Wafati's Residence, Fatima Nagar, Malkapur to Timarni</span>
+          </div>
+        </article>
+
+        <!-- Event 2: Mubarak Nikah -->
+        <article class="ev-card" data-idx="1">
+          <div class="ec">
+            <span class="ev-badge">Sacred Union</span>
+            <div class="ill"><svg viewBox="0 0 64 64"><use href="#i-nikah"></use></svg></div>
+            <span class="ewhen">Sunday · 27 Dec 2026 · Baad Maghrib</span>
+            <h3>Mubarak Nikah</h3>
+            <span class="place">Timarni, Dist. Harda (Madhya Pradesh)</span>
+          </div>
+        </article>
+
+        <!-- Event 3: Dawat-e-Walima -->
+        <article class="ev-card" data-idx="2">
+          <div class="ec">
+            <span class="ev-badge">Royal Banquet</span>
+            <div class="ill"><svg viewBox="0 0 64 64"><use href="#i-walima"></use></svg></div>
+            <span class="ewhen">Tuesday · 29 Dec 2026 · Baad Maghrib</span>
+            <h3>Dawat-e-Walima</h3>
+            <span class="place">Bharat Lawns, Muktainagar Road, Near Dr. VB Kolte College, Malkapur</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="pdots" id="evdots">
+        <i class="on"></i><i></i><i></i>
+      </div>
+      <div class="swipe-hint">Swipe to see every ceremony</div>
+    </section>
+
+    <!-- 4. DASTAAN-E-ISHQ (SACRED UNION & LOVE STORY) -->
+    <section class="blush in" id="story">
+      <div class="bgword">Ishq</div>
+      <div class="head rv on">
+        <span class="label">Sacred Union &bull; दास्तान-ए-इश्क़</span>
+        <h2>Dastaan-e-Ishq</h2>
+        <p class="story-subtitle">“And We created you in pairs” &bull; A celebration of two hearts united in grace</p>
+      </div>
+
+      <!-- 3D Interactive Story Carousel -->
+      <div class="story-sphere" aria-label="Wedding love story gallery, swipe to browse">
+        <!-- Card 1 -->
+        <article class="story-card" data-idx="0">
+          <div class="sc-arch">
+            <img class="sc-img" src="photos/story_1.jpg" alt="And We Created You in Pairs - Sacred Union" loading="lazy">
+            <div class="sc-cap">
+              <b>Destined by Grace</b>
+              <span>“And We created you in pairs”</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="story-card" data-idx="1">
+          <div class="sc-arch">
+            <img class="sc-img" src="photos/story_2.jpg" alt="Mubarak Nikah - The Sacred Vows" loading="lazy">
+            <div class="sc-cap">
+              <b>Mubarak Nikah</b>
+              <span>The Sacred Vow &bull; Qubool Hai</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="story-card" data-idx="2">
+          <div class="sc-arch">
+            <img class="sc-img" src="photos/story_3.jpg" alt="A Legacy of Elegance" loading="lazy">
+            <div class="sc-cap">
+              <b>Royal Elegance</b>
+              <span>Stepping into a blessed tomorrow</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="story-card" data-idx="3">
+          <div class="sc-arch">
+            <img class="sc-img" src="photos/story_4.jpg" alt="Together in Harmony" loading="lazy">
+            <div class="sc-cap">
+              <b>Bound by Devotion</b>
+              <span>Two souls, one heartfelt prayer</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="story-card" data-idx="4">
+          <div class="sc-arch">
+            <img class="sc-img" src="photos/story_5.jpg" alt="A Lifetime of Joy" loading="lazy">
+            <div class="sc-cap">
+              <b>Celebration of Joy</b>
+              <span>A lifetime of laughter, faith &amp; love</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Navigation Dots & Swipe Hint -->
+      <div class="pdots" id="story-dots">
+        <i class="on" data-idx="0"></i>
+        <i data-idx="1"></i>
+        <i data-idx="2"></i>
+        <i data-idx="3"></i>
+        <i data-idx="4"></i>
+      </div>
+      <div class="swipe-hint">Swipe to explore their story</div>
+    </section>
+
+    <!-- 5. GRAND DAWAT-E-WALIMA VELVET CARD -->
+    <section class="reception in" id="reception">
+      <div class="bgword">Walima</div>
+      <div class="rec-card rv on">
+        <div class="sparks" id="sparks">
+          <i style="left:12%; top:18%; animation-delay:0.2s;"></i>
+          <i style="left:84%; top:22%; animation-delay:1.1s;"></i>
+          <i style="left:32%; top:45%; animation-delay:0.7s;"></i>
+          <i style="left:76%; top:68%; animation-delay:1.8s;"></i>
+          <i style="left:18%; top:78%; animation-delay:2.3s;"></i>
+          <i style="left:52%; top:88%; animation-delay:1.4s;"></i>
+        </div>
+        <div class="head">
+          <span class="label">You are cordially invited to</span>
+          <h2>Dawat-e-Walima</h2>
+        </div>
+        <div class="rec">
+          <div class="ill">
+            <svg viewBox="0 0 64 64"><use href="#i-walima"></use></svg>
+          </div>
+          <div class="big">Tuesday, 29 December 2026</div>
+          <p>Baad Namaz-e-Maghrib · Royal Banquet &amp; Dua-e-Khair</p>
+          <p>Bharat Lawns, Muktainagar Road, Near Dr. VB Kolte College, Malkapur (Dist. Buldhana)</p>
+          <div class="chip">Dua-e-Khair &bull; Nikah Mubarak</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FAMILY PATRONS & LINEAGE -->
+    <section class="in" id="lineage">
+      <div class="bgword">Family</div>
+      <div class="head rv on">
+        <span class="label">Respected Heritage &bull; सरपरस्त</span>
+        <h2>Family &amp; Lineage</h2>
+      </div>
+
+      <div class="lineage-card rv on">
+        <div class="lineage-grid">
+          <div class="lineage-col">
+            <h4>Groom's Side</h4>
+            <b>Abdul Razique Chauhan</b>
+            <p>Son of: Mohd. Bilal Chauhan</p>
+            <p>Grandson of: Marhoom Haji Bafati Chauhan</p>
+            <p>Prapotra of: Marhoom Khudabaksh Chauhan (Sikar wale)</p>
+          </div>
+          <div class="lineage-col">
+            <h4>Bride's Side</h4>
+            <b>Alisha Naz</b>
+            <p>Daughter of: Ashfaq Ji Banthia</p>
+            <p>Granddaughter of: Marhoom Ismail Ji Banthia</p>
+            <p>Prapotri of: Marhoom Saheba Ji Banthia (Raipuriya)</p>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px dashed rgba(197,158,83,.4);">
+          <span class="label" style="font-size:10px;">Sarparast &bull; सरपरस्त</span>
+          <p style="font-size:13px; color:var(--wine); margin:4px 0; font-weight:600;">
+            Janab Alauddin Chauhan &bull; Janab Jamaldin Chauhan &bull; Haji Imamuddin Chauhan (Sikar / Malkapur)
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. VENUE & ILLUSTRATED MAP -->
+    <section class="in" id="malkapur">
+      <div class="bgword">Venue</div>
+      <div class="head rv on">
+        <span class="label">The Reception Venue &bull; मुकाम</span>
+        <h2>Getting There</h2>
+      </div>
+
+      <!-- Venue Map Card with Background Image -->
+      <a class="map rv on" href="https://maps.app.goo.gl/iVPfdUnSr9m5kzcw7" target="_blank" rel="noopener" aria-label="Open Bharat Lawns, Malkapur in Google Maps">
+        <div class="map-glass-badge">
+          <div class="map-pin-pulse"></div>
+          <div class="badge-text">
+            <b>Bharat Lawns, Malkapur</b>
+            <span>Muktainagar Road · Near Dr. VB Kolte College</span>
+          </div>
+          <span class="tap-open">OPEN IN MAPS ↗</span>
+        </div>
+      </a>
+
+      <div class="vname">Bharat Lawns</div>
+      <div class="addr">Muktainagar Road, Near Dr. VB Kolte College, Malkapur, District Buldhana, Maharashtra 443101</div>
+
+      <div class="actions">
+        <a class="btn" href="https://maps.app.goo.gl/iVPfdUnSr9m5kzcw7" target="_blank" rel="noopener">
+          Get Directions
+        </a>
+        <button class="btn ghost" id="btnCopyAddress" type="button">
+          Copy Address
+        </button>
+      </div>
+      <div class="copied" id="copied" aria-live="polite"></div>
+
+      <!-- KEY HOSTS & ADADYAN -->
+      <div class="hosts-card rv on">
+        <span class="label">Adadyan &bull; अदादयान / सम्पर्क</span>
+        <h3 style="font-family:var(--f-head); color:var(--wine); font-size:22px; margin-top:4px;">Hosts &amp; Inquiries</h3>
+
+        <div class="hosts-list">
+          <div class="host-item">
+            <div>
+              <div class="host-name">Mohd. Hasan Chauhan</div>
+              <small style="color:var(--muted); font-size:11px;">+91 7972332327</small>
+            </div>
+            <a class="call-btn" href="tel:+917972332327">
+              <svg viewBox="0 0 24 24"><use href="#i-phone"></use></svg>
+              <span>Call</span>
+            </a>
+          </div>
+
+          <div class="host-item">
+            <div>
+              <div class="host-name">Haji Mohd. Wazir Chauhan</div>
+              <small style="color:var(--muted); font-size:11px;">+91 9422543131</small>
+            </div>
+            <a class="call-btn" href="tel:+919422543131">
+              <svg viewBox="0 0 24 24"><use href="#i-phone"></use></svg>
+              <span>Call</span>
+            </a>
+          </div>
+
+          <div class="host-item">
+            <div>
+              <div class="host-name">Mohd. Bilal Chauhan</div>
+              <small style="color:var(--muted); font-size:11px;">+91 9860883334</small>
+            </div>
+            <a class="call-btn" href="tel:+919860883334">
+              <svg viewBox="0 0 24 24"><use href="#i-phone"></use></svg>
+              <span>Call</span>
+            </a>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <span class="label" style="font-size:10px;">Muntazimeen &bull; मुंतज़मीन</span>
+          <p style="font-size:12px; color:var(--muted); margin:4px 0; line-height:1.5;">
+            Mohd. Sufiyan Hasan &bull; Mohd. Shoaib Wazir &bull; Mohd. Usman Hasan &bull; Mohd. Aaqib Wazir &bull; A. Rahim Bilal &bull; Noor Mohammad Bilal
+          </p>
+        </div>
+
+        <!-- Chauhan Family Commercial Establishments -->
+        <div style="margin-top:14px; padding-top:12px; border-top:1px dashed rgba(197,158,83,.3);">
+          <span class="label" style="font-size:10px;">Family Establishments &bull; चौहान परिवार</span>
+          <div class="firms-row">
+            <span class="firm-badge">Rajasthan Kirana Store (Aathwadi Bazar)</span>
+            <span class="firm-badge">Maseera Foods Private Limited</span>
+            <span class="firm-badge">Rajasthan Dry Fruit (Aathwadi Bazar)</span>
+            <span class="firm-badge">Guddu Kirana Store (Sabzi Mandi)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. FOREVER, KIDS' LOVE & RSVP -->
+    <section class="blush in" id="forever" style="padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))">
+      <div class="bgword">Du'as</div>
+      <div class="head rv on">
+        <span class="label">Kindly respond</span>
+        <h2>Will You Join Us?</h2>
+      </div>
+
+      <form class="rsvp rv on" id="rsvp">
+        <input type="text" id="r-name" placeholder="Your name (आप का नाम)" required autocomplete="name">
+        <div class="two">
+          <button class="btn" type="submit" data-a="yes">Attending</button>
+          <button class="btn ghost" type="submit" data-a="no">With Du'as</button>
+        </div>
+      </form>
+
+      <!-- Kids' Special Cards -->
+      <div class="kids-wrapper rv on">
+        <div class="kids-card">
+          <h4>“Mere Chacha Ki Shaadi Mein Zaroor Zaroor Aana”</h4>
+          <p>Abdulrehman, Mahin, Ibrahim, Anabiya, Zara, Babar, Orahan, Myra</p>
+        </div>
+        <div class="kids-card">
+          <h4>“Mere Mama Ki Shaadi Mein Zaroor Zaroor Aana”</h4>
+          <p>Sara, Ashfiya, Abdulrehman, Aleena, Humaira, Raza, Hamna, Madina, Amra, Rozen, Mehwish, Abdulahad</p>
+        </div>
+      </div>
+
+      <div class="bye rv on">
+        <div class="fam">With love &amp; respect, Chauhan &amp; Banthia Families</div>
+        <div class="kids" style="margin-top:6px; color:var(--gold); font-weight:600;">Insha'Allah Mubarak</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       THEME SELECTOR MODAL & COLOR PALETTES
+       ========================================== -->
+  <div id="theme-modal" class="theme-modal" aria-hidden="true" role="dialog" aria-labelledby="theme-modal-title">
+    <div class="theme-backdrop" id="theme-backdrop"></div>
+    <div class="theme-sheet">
+      <div class="theme-header">
+        <div class="theme-title-wrap">
+          <span class="theme-eyebrow">Aesthetic / रंग</span>
+          <h3 id="theme-modal-title">Select Color Theme</h3>
+        </div>
+        <button class="theme-close" id="theme-close" aria-label="Close theme selection">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      
+      <div class="theme-grid">
+        <!-- 1. Mehndi Emerald (Dark Green & Mehndi Theme) -->
+        <button class="theme-card" data-theme-choice="emerald" type="button">
+          <div class="tc-header">
+            <div class="tc-title">Mehndi Emerald</div>
+            <div class="tc-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="tc-swatches">
+            <span class="swatch" style="background:#052a20; border:1px solid rgba(255,255,255,0.25)"></span>
+            <span class="swatch" style="background:#1b6e54"></span>
+            <span class="swatch" style="background:#dfb76c"></span>
+          </div>
+          <div class="tc-desc">Deep dark green, mehndi shade &amp; royal gold</div>
+        </button>
+
+        <!-- 2. Rose Ruby Velvet -->
+        <button class="theme-card" data-theme-choice="rose" type="button">
+          <div class="tc-header">
+            <div class="tc-title">Rose Ruby Velvet</div>
+            <div class="tc-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="tc-swatches">
+            <span class="swatch" style="background:#ff85a1"></span>
+            <span class="swatch" style="background:#8b1032"></span>
+            <span class="swatch" style="background:#d4af37"></span>
+          </div>
+          <div class="tc-desc">Vibrant rose pink backdrop, ruby wine &amp; gold</div>
+        </button>
+
+        <!-- 3. Royal Marigold -->
+        <button class="theme-card" data-theme-choice="marigold" type="button">
+          <div class="tc-header">
+            <div class="tc-title">Royal Marigold</div>
+            <div class="tc-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="tc-swatches">
+            <span class="swatch" style="background:#ff793f"></span>
+            <span class="swatch" style="background:#b83a04"></span>
+            <span class="swatch" style="background:#fbc531"></span>
+          </div>
+          <div class="tc-desc">Festive saffron haldi, marigold orange &amp; amber</div>
+        </button>
+
+        <!-- 4. Midnight Gold -->
+        <button class="theme-card" data-theme-choice="midnight" type="button">
+          <div class="tc-header">
+            <div class="tc-title">Midnight Gold</div>
+            <div class="tc-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+          </div>
+          <div class="tc-swatches">
+            <span class="swatch" style="background:#060c18; border:1px solid rgba(255,255,255,0.25)"></span>
+            <span class="swatch" style="background:#dfb76c"></span>
+            <span class="swatch" style="background:#1a2b4c"></span>
+          </div>
+          <div class="tc-desc">Celestial midnight navy, starlight gold &amp; sapphire</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Configuration and Interactivity Scripts -->
+  <script src="wedding-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
